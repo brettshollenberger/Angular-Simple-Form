@@ -3,13 +3,13 @@
 Simple Form DRYs up your forms by eliminating boilerplate, selecting some intelligent defaults, and moving validation logic where it belongs -- to the models.
 
 A simple form looks a lot like a standard Angular form, but with less fuss:
-
+  ```
   <form for="user">
     <input ng-model="user.name">
     <input ng-model="user.email">
     <input ng-model="user.zip">
   </form>
-
+  ```
 Packed into that sleek facade is a lot more information for Angular:
   ```
   <form name="userForm">
