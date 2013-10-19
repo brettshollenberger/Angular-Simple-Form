@@ -28,7 +28,7 @@ describe('Simple Form', function () {
       passwordConfirmation: '',
       validates: {
         name:                 { presence: true },
-        email:                { presence: true, email: true },
+        email:                { presence: true, format: { email: true } },
         zip:                  { presence: true, zip: [ zipValidator, "Must contain a valid zip code" ] },
         termsOfService:       { acceptance: true },
         password:             { confirmation: true },
@@ -87,7 +87,7 @@ describe('Simple Form', function () {
 
     it('features built-in validations', function() {
       expect(ngFormCtrl.$fields['user.name'].$validates).toEqual({presence: true});
-      expect(ngFormCtrl.$fields['user.email'].$validates).toEqual({presence: true, email: true});
+      expect(ngFormCtrl.$fields['user.email'].$validates).toEqual({presence: true, format: { email: true } });
     });
 
     it('accepts custom validations', function() {
@@ -132,7 +132,7 @@ describe('Simple Form', function () {
       parentScope.user = {
         zip: '',
         validates: {
-          zip:   { zip: true }
+          zip:   { format: { zip: true } }
         }
       };
 

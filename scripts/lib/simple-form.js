@@ -53,14 +53,16 @@ simpleForm.directive('ngModel', function($compile) {
             presence: function(value) {
               return value && value.length;
             },
-            email: function(value) {
-              if (!value) return true;
-              return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/.test(value);
-            },
-            zip: function(value) {
-              if(!value) return true;
-              return /(^\d{5}$)|(^\d{5}-{0,1}\d{4}$)/.test(value);
-            },
+            format: {
+              email: function(value) {
+                if (!value) return true;
+                return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/.test(value);
+              },
+              zip: function(value) {
+                if(!value) return true;
+                return /(^\d{5}$)|(^\d{5}-{0,1}\d{4}$)/.test(value);
+              },
+            },            
             acceptance: function(value) {
               return value == true;
             },
@@ -78,19 +80,47 @@ simpleForm.directive('ngModel', function($compile) {
 
           function addValidations(validator, validation) {
             var validationKey;
-            if (!validation[0]) { validationKey = validators[validator.toString()]; }
-            if (validation[0])  { validationKey = validation[0]; }
+            var type = Object.prototype.toString.call( validation );
 
-            modelCtrl.$parsers.push(function(value) {
-              if (validationKey(value)) {
-                modelCtrl.$setValidity(validator, true);
-              } else {
-                modelCtrl.$setValidity(validator, false);
+            if (booleanType(type)) { validationKey = findBuiltInValidation(); }
+            if (arrayType(type))   { validationKey = validation[0]; }
+            if (validationKey)     { pushParser(validationKey); }
+            if (objectType(type))  {
+              for (var v in validation) {
+                validationKey = findNestedBuiltInValidation(v);
+                pushParser(validationKey);
               }
-              return value;
-            });
+            }
             
             element.attr({validates: Object.keys(modelCtrl.$validates)});
+          }
+
+          function booleanType(type) {
+            return type === '[object Boolean]';
+          }
+
+          function arrayType(type) {
+            return type === '[object Array]';
+          }
+
+          function objectType(type) {
+            return type === '[object Object]';
+          }
+
+          function findBuiltInValidation() {
+            return validators[validator.toString()];
+          }
+
+          function findNestedBuiltInValidation(v) {
+            return validators[validator.toString()][v];
+          }
+
+          function pushParser(validationKey) {
+            modelCtrl.$parsers.push(function(value) {
+              if (validationKey(value))  { modelCtrl.$setValidity(validator, true);  }
+              if (!validationKey(value)) { modelCtrl.$setValidity(validator, false); }
+              return value;
+            });
           }
         }
       };
