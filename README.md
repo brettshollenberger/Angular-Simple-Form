@@ -38,4 +38,65 @@ Writing custom validations is much easier in Simple Form, too. No more boilerpla
     return /(^\d{5}$)|(^\d{5}-{0,1}\d{4}$)/.test(zip);
   };
   ```
-That's it! Happy hacking.
+
+### Built-in Validators:
+
+#### Presence:
+
+As in Rails, `presence: true` indicates a required field:
+
+  ```
+  user = {
+    name: '',
+    validates: {
+      name:  { presence: true }
+    }
+  };
+  ```
+
+#### Format:
+
+Format matches an input against a pattern. There are several built-in, and you can also write your own using the `regex` matcher:
+
+  ```
+  parentScope.user = {
+    email: '',
+    zip: '',
+    orderNumber: '',
+    validates: {
+      email:       { format: { email: true              } },
+      zip:         { format: { zip:   true              } },
+      orderNumber: { format: { regex: /\d{3}\w{2}\d{3}/ } }
+    }
+  };
+  ```
+
+#### Acceptance:
+
+Acceptance is often used in web applications to verify that a user has accepted something like terms of service. This indicates a true value in a checkbox, for instance:
+
+  ```
+  parentScope.user = {
+    termsOfService: '',
+    validates: {
+      termsOfService: { acceptance: true }
+    }
+  };
+  ```
+
+#### Confirmation: 
+
+When two fields need to match, confirmation ensures that both fields do. The second field should be the name of the first field plus "Confirmation."
+
+  ```
+  parentScope.user = {
+    password: '',
+    passwordConfirmation: '',
+    validates: {
+      password: { confirmation: true },
+      passwordConfirmation: { presence: true },
+    }
+  };
+  ```
+
+Stay tuned for more! Happy hacking.
