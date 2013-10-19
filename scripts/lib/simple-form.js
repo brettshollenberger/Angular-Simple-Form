@@ -34,46 +34,63 @@ simpleForm.directive('form', function() {
   };
 });
 
-simpleForm.directive('ngModel', function() {
+simpleForm.directive('ngModel', function($compile) {
+
   return {
     restrict: 'A',
     require: ['^ngModel', '^form'],
     compile: function() {
       return {
         pre: function(scope, element, attrs, ctrls) {
-          var $model;
-
-          var modelCtrl = ctrls[0],
-          formCtrl = ctrls[1] || nullFormCtrl;
-
+          var $model, modelName, fieldName, confirmationName,
+          modelCtrl            = ctrls[0],
+          formCtrl             = ctrls[1] || nullFormCtrl;
           modelCtrl.$name      = attrs.name || attrs.ngModel || 'unnamedInput';
           $model               = scope.$eval(attrs.ngModel.replace(/\.\w{0,}/g, ''));
           modelCtrl.$validates = $model.validates[attrs.ngModel.replace(/\w{0,}\./, '')];
+
+          var validators = {
+            presence: function(value) {
+              return value && value.length;
+            },
+            email: function(value) {
+              if (!value) return true;
+              return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/.test(value);
+            },
+            zip: function(value) {
+              if(!value) return true;
+              return /(^\d{5}$)|(^\d{5}-{0,1}\d{4}$)/.test(value);
+            },
+            acceptance: function(value) {
+              return value == true;
+            },
+            confirmation: function(value) {
+              modelName        = attrs.ngModel.replace(/\.\w{0,}/g, '');
+              fieldName        = modelCtrl.$name.replace(/\w{0,}\./, '');
+              confirmationName = modelName + '.' + fieldName + 'Confirmation';
+              return value == formCtrl.$fields[confirmationName].$viewValue;
+            }
+          };
 
           for (var validator in modelCtrl.$validates) {
             addValidations(validator, modelCtrl.$validates[validator]);
           }
 
           function addValidations(validator, validation) {
-            var validators = {
-              presence: { required: true },
-              email:    { type: "email" }
-            };
+            var validationKey;
+            if (!validation[0]) { validationKey = validators[validator.toString()]; }
+            if (validation[0])  { validationKey = validation[0]; }
 
-            var validationKey = validators[validator.toString()];
-            if (validationKey) {
-              element.attr(validationKey);
-            } else {
-              modelCtrl.$parsers.push(function(value) {
-                if (validation[0](value)) {
-                  modelCtrl.$setValidity(validator, true);
-                } else {
-                  modelCtrl.$setValidity(validator, false);
-                }
-                return value;
-              });
-              element.attr({validates: Object.keys(modelCtrl.$validates)});
-            }
+            modelCtrl.$parsers.push(function(value) {
+              if (validationKey(value)) {
+                modelCtrl.$setValidity(validator, true);
+              } else {
+                modelCtrl.$setValidity(validator, false);
+              }
+              return value;
+            });
+            
+            element.attr({validates: Object.keys(modelCtrl.$validates)});
           }
         }
       };

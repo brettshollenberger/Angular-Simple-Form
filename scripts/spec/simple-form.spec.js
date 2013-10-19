@@ -23,10 +23,16 @@ describe('Simple Form', function () {
       email: '',
       zip: '',
       id: '',
+      termsOfService: false,
+      password: '',
+      passwordConfirmation: '',
       validates: {
-        name:  { presence: true },
-        email: { presence: true, email: true },
-        zip:   { presence: true, zip: [ zipValidator, "Must contain a valid zip code" ] }
+        name:                 { presence: true },
+        email:                { presence: true, email: true },
+        zip:                  { presence: true, zip: [ zipValidator, "Must contain a valid zip code" ] },
+        termsOfService:       { acceptance: true },
+        password:             { confirmation: true },
+        passwordConfirmation: { presence: true }
       },
       save: angular.noop,
       find: angular.noop
@@ -40,6 +46,9 @@ describe('Simple Form', function () {
                           '<input ng-model="user.name">' +
                           '<input ng-model="user.email">' +
                           '<input ng-model="user.zip">' +
+                          '<input ng-model="user.termsOfService">' +
+                          '<input ng-model="user.password">' +
+                          '<input ng-model="user.passwordConfirmation">' +
                        '</form>';
 
     // Compile the view and bind to the scope
@@ -81,12 +90,6 @@ describe('Simple Form', function () {
       expect(ngFormCtrl.$fields['user.email'].$validates).toEqual({presence: true, email: true});
     });
 
-    it('defaults to built-in Angular directives for validations', function() {
-      expect(element.html().match(/required="required"/)).not.toBeNull();
-      expect(element.html().match(/type="email"/)).not.toBeNull();
-      expect(element.html().match(/type="phone"/)).toBeNull();
-    });
-
     it('accepts custom validations', function() {
       expect(element.html().match(/validates="presence,zip"/)).not.toBeNull();
     });
@@ -111,7 +114,57 @@ describe('Simple Form', function () {
       expect(element.html().match(/ng-valid-zip/)).toBeNull();
       expect(element.html().match(/ng-invalid-zip/)).not.toBeNull();
     });
+
+    it('validates the presence of a field', function() {
+      ngFormCtrl.$fields['user.name'].$setViewValue(null);
+      expect(ngFormCtrl.$fields['user.name'].$valid).toBe(false);
+    });
+
+    it('validates emails', function() {
+      ngFormCtrl.$fields['user.email'].$setViewValue('porky');
+      expect(ngFormCtrl.$fields['user.email'].$valid).toBe(false);
+
+      ngFormCtrl.$fields['user.email'].$setViewValue('porky@pig.net');
+      expect(ngFormCtrl.$fields['user.email'].$valid).toBe(true);
+    });
       
+    it('validates zip codes by default', function() {
+      parentScope.user = {
+        zip: '',
+        validates: {
+          zip:   { zip: true }
+        }
+      };
+
+      html             = '<form for="user">' +
+                            '<input ng-model="user.zip">' +
+                          '</form>';
+      element          = $compile(html)($scope);
+      ngFormCtrl       = element.controller('form');
+
+      ngFormCtrl.$fields['user.zip'].$setViewValue('11111-1111');
+      expect(ngFormCtrl.$fields['user.zip'].$valid).toBe(true);
+
+      ngFormCtrl.$fields['user.zip'].$setViewValue('blah');
+      expect(ngFormCtrl.$fields['user.zip'].$valid).toBe(false);
+    });
+
+    it('validates checkbox acceptance', function() {
+      ngFormCtrl.$fields['user.termsOfService'].$setViewValue(true);
+      expect(ngFormCtrl.$fields['user.termsOfService'].$valid).toBe(true);
+
+      ngFormCtrl.$fields['user.termsOfService'].$setViewValue(false);
+      expect(ngFormCtrl.$fields['user.termsOfService'].$valid).toBe(false);
+    });
+
+    it('validates confirmation of matching fields', function() {
+      ngFormCtrl.$fields['user.password'].$setViewValue('myPassword');
+      expect(ngFormCtrl.$fields['user.password'].$valid).toBe(false);
+
+      ngFormCtrl.$fields['user.passwordConfirmation'].$setViewValue('myPassword');
+      ngFormCtrl.$fields['user.password'].$setViewValue('myPassword');
+      expect(ngFormCtrl.$fields['user.password'].$valid).toBe(true);
+    });
 
   });
   
