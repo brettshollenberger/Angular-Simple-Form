@@ -42,7 +42,7 @@ simpleForm.directive('ngModel', function($compile) {
     compile: function() {
       return {
         pre: function(scope, element, attrs, ctrls) {
-          var $model, modelName, fieldName, confirmationName,
+          var $model, modelName, fieldName, confirmationName, validationKey, keyName,
           modelCtrl            = ctrls[0],
           formCtrl             = ctrls[1] || nullFormCtrl;
           modelCtrl.$name      = attrs.name || attrs.ngModel || 'unnamedInput';
@@ -80,7 +80,6 @@ simpleForm.directive('ngModel', function($compile) {
           }
 
           function addValidations(validator, validation) {
-            var validationKey;
             var type = Object.prototype.toString.call( validation );
 
             if (booleanType(type)) { validationKey = findBuiltInValidation(); }
@@ -88,11 +87,12 @@ simpleForm.directive('ngModel', function($compile) {
             if (validationKey)     { pushParser(validationKey); }
             if (objectType(type))  {
               for (var v in validation) {
-                var keyName   = Object.keys(validation)[0];
-                if (keyName == 'regex') { validationKey = buildRegexValidation(validation, v); }
-                if (keyName == 'in')    { validationKey = buildInclusionValidation(validation, v); }
-                if (keyName == 'from')    { validationKey = buildExclusionValidation(validation, v); }
-                if (otherKeyName(keyName)) { validationKey = findNestedBuiltInValidation(v); }
+                keyName = Object.keys(validation)[0];
+                handleFormatValidation(validation, v);
+                handleInclusionValidation(validation, v);
+                handleExclusionValidation(validation, v);
+                handleLengthValidation(validation, v);
+                handleNestedValidation(validation, v);
                 pushParser(validationKey);
               }
             }
@@ -109,6 +109,26 @@ simpleForm.directive('ngModel', function($compile) {
 
           function objectType(type) {
             return type === '[object Object]';
+          }
+
+          function handleFormatValidation(validation, v) {
+            if (validator == 'format' && keyName == 'regex') { validationKey = buildRegexValidation(validation, v); }
+          }
+
+          function handleInclusionValidation(validation, v) {
+            if (validator == 'inclusion' && keyName == 'in') { validationKey = buildInclusionValidation(validation, v); }
+          }
+
+          function handleExclusionValidation(validation, v) {
+            if (validator == 'exclusion' && keyName == 'from') { validationKey = buildExclusionValidation(validation, v); }
+          }
+
+          function handleLengthValidation(validation, v) {
+            if (validator == 'length' && keyName == 'in') { validationKey = buildLengthInValidation(validation, v); }
+          }
+
+          function handleNestedValidation(validation, v) {
+            if (otherKeyName(keyName)) { validationKey = findNestedBuiltInValidation(v); }
           }
 
           function findBuiltInValidation() {
@@ -139,6 +159,13 @@ simpleForm.directive('ngModel', function($compile) {
             return function(value) {
               if (!value) return true;
               return validation[v].test(value);
+            };
+          }
+
+          function buildLengthInValidation(validation, v) {
+            return function(value) {
+              if (!value) return true;
+              return (value.length >= validation[v][0] && value.length <= validation[v][validation[v].length - 1]);
             };
           }
 

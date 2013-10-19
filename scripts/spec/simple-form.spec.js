@@ -20,6 +20,7 @@ describe('Simple Form', function () {
     // Simulate a model on the parent scope
     parentScope.user = {
       name: '',
+      username: '',
       email: '',
       zip: '',
       id: '',
@@ -28,6 +29,7 @@ describe('Simple Form', function () {
       passwordConfirmation: '',
       validates: {
         name:                 { presence: true },
+        username:             { presence: true, length: { in: _.range(1, 10) } },
         email:                { presence: true, format: { email: true } },
         zip:                  { presence: true, zip: [ zipValidator, "Must contain a valid zip code" ] },
         termsOfService:       { acceptance: true },
@@ -44,6 +46,7 @@ describe('Simple Form', function () {
     // Basic HTML use case
     html             = '<form for="user">' +
                           '<input ng-model="user.name">' +
+                          '<input ng-model="user.username">' +
                           '<input ng-model="user.email">' +
                           '<input ng-model="user.zip">' +
                           '<input ng-model="user.termsOfService">' +
@@ -227,6 +230,14 @@ describe('Simple Form', function () {
 
       ngFormCtrl.$fields['user.size'].$setViewValue('XL');
       expect(ngFormCtrl.$fields['user.size'].$valid).toBe(false);
+    });
+
+    it('validates length', function() {
+      ngFormCtrl.$fields['user.username'].$setViewValue('abcdefghijk');
+      expect(ngFormCtrl.$fields['user.username'].$valid).toBe(false);
+
+      ngFormCtrl.$fields['user.username'].$setViewValue('username');
+      expect(ngFormCtrl.$fields['user.username'].$valid).toBe(true);
     });
 
   });
