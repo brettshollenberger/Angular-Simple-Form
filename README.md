@@ -99,4 +99,17 @@ When two fields need to match, confirmation ensures that both fields do. The sec
   };
   ```
 
+#### Inclusion: 
+
+Verifies that a field's value is included in a given set:
+
+  ```
+  parentScope.user = {
+    size: '',
+    validates: {
+      size: { inclusion: { in: ["small", "medium", "large"] } }
+    }
+  };
+  ```
+
 Stay tuned for more! Happy hacking.
