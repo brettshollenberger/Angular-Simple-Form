@@ -62,7 +62,8 @@ simpleForm.directive('ngModel', function($compile) {
                 if(!value) return true;
                 return /(^\d{5}$)|(^\d{5}-{0,1}\d{4}$)/.test(value);
               },
-            },            
+            },
+            // inclusion: {},
             acceptance: function(value) {
               return value == true;
             },
@@ -87,8 +88,10 @@ simpleForm.directive('ngModel', function($compile) {
             if (validationKey)     { pushParser(validationKey); }
             if (objectType(type))  {
               for (var v in validation) {
-                validationKey = findNestedBuiltInValidation(v);
-                if (!validationKey) { validationKey = buildRegexValidation(validation, v); }
+                var keyName   = Object.keys(validation)[0];
+                if (keyName == 'regex') { validationKey = buildRegexValidation(validation, v); }
+                if (keyName == 'in')    { validationKey = buildInclusionValidation(validation, v); }
+                if (otherKeyName(keyName)) { validationKey = findNestedBuiltInValidation(v); }
                 pushParser(validationKey);
               }
             }
@@ -127,10 +130,25 @@ simpleForm.directive('ngModel', function($compile) {
             return validator == 'confirmation';
           }
 
+          function otherKeyName(keyName) {
+            return keyName != 'in' && keyName != 'regex';
+          }
+
           function buildRegexValidation(validation, v) {
             return function(value) {
               if (!value) return true;
               return validation[v].test(value);
+            };
+          }
+
+          function buildInclusionValidation(validation, v) {
+            return function(value) {
+              if (!value) return true;
+              var included = false;
+              validation[v].forEach(function(i) {
+                if (i == value) { included = true; }
+              });
+              return included;
             };
           }
         }

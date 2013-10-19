@@ -185,6 +185,28 @@ describe('Simple Form', function () {
       expect(ngFormCtrl.$fields['user.orderNumber'].$valid).toBe(true);
     });
 
+    it('validates inclusion in a set of terms', function() {
+      parentScope.user = {
+        size: '',
+        validates: {
+          size: { inclusion: { in: ["small", "medium", "large"] } }
+        }
+      };
+
+      html =  '<form for="user">' +
+                '<input ng-model="user.size">' +
+              '</form>';
+
+      element          = $compile(html)($scope);
+
+      ngFormCtrl       = element.controller('form');
+      ngFormCtrl.$fields['user.size'].$setViewValue('small');
+      expect(ngFormCtrl.$fields['user.size'].$valid).toBe(true);
+
+      ngFormCtrl.$fields['user.size'].$setViewValue('hefty');
+      expect(ngFormCtrl.$fields['user.size'].$valid).toBe(false);
+    });
+
   });
   
 });
