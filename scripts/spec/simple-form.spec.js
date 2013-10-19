@@ -145,7 +145,7 @@ describe('Simple Form', function () {
       ngFormCtrl.$fields['user.zip'].$setViewValue('11111-1111');
       expect(ngFormCtrl.$fields['user.zip'].$valid).toBe(true);
 
-      ngFormCtrl.$fields['user.zip'].$setViewValue('blah');
+      ngFormCtrl.$fields['user.zip'].$setViewValue('not a zip');
       expect(ngFormCtrl.$fields['user.zip'].$valid).toBe(false);
     });
 
@@ -164,6 +164,25 @@ describe('Simple Form', function () {
       ngFormCtrl.$fields['user.passwordConfirmation'].$setViewValue('myPassword');
       ngFormCtrl.$fields['user.password'].$setViewValue('myPassword');
       expect(ngFormCtrl.$fields['user.password'].$valid).toBe(true);
+    });
+
+    it('validates custom formats', function() {
+      parentScope.user = {
+        orderNumber: '',
+        validates: {
+          orderNumber: { format: { regex: /\d{3}\w{2}\d{3}/ } }
+        }
+      };
+
+      html =  '<form for="user">' +
+                '<input ng-model="user.orderNumber">' +
+              '</form>';
+
+      element          = $compile(html)($scope);
+
+      ngFormCtrl       = element.controller('form');
+      ngFormCtrl.$fields['user.orderNumber'].$setViewValue('123ab456');
+      expect(ngFormCtrl.$fields['user.orderNumber'].$valid).toBe(true);
     });
 
   });

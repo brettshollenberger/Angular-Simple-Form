@@ -88,10 +88,10 @@ simpleForm.directive('ngModel', function($compile) {
             if (objectType(type))  {
               for (var v in validation) {
                 validationKey = findNestedBuiltInValidation(v);
+                if (!validationKey) { validationKey = buildRegexValidation(validation, v); }
                 pushParser(validationKey);
               }
             }
-            
             element.attr({validates: Object.keys(modelCtrl.$validates)});
           }
 
@@ -121,6 +121,17 @@ simpleForm.directive('ngModel', function($compile) {
               if (!validationKey(value)) { modelCtrl.$setValidity(validator, false); }
               return value;
             });
+          }
+
+          function confirmationType() {
+            return validator == 'confirmation';
+          }
+
+          function buildRegexValidation(validation, v) {
+            return function(value) {
+              if (!value) return true;
+              return validation[v].test(value);
+            };
           }
         }
       };
