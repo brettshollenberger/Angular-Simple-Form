@@ -91,6 +91,7 @@ simpleForm.directive('ngModel', function($compile) {
                 var keyName   = Object.keys(validation)[0];
                 if (keyName == 'regex') { validationKey = buildRegexValidation(validation, v); }
                 if (keyName == 'in')    { validationKey = buildInclusionValidation(validation, v); }
+                if (keyName == 'from')    { validationKey = buildExclusionValidation(validation, v); }
                 if (otherKeyName(keyName)) { validationKey = findNestedBuiltInValidation(v); }
                 pushParser(validationKey);
               }
@@ -131,7 +132,7 @@ simpleForm.directive('ngModel', function($compile) {
           }
 
           function otherKeyName(keyName) {
-            return keyName != 'in' && keyName != 'regex';
+            return keyName != 'in' && keyName != 'from' && keyName != 'regex';
           }
 
           function buildRegexValidation(validation, v) {
@@ -147,6 +148,17 @@ simpleForm.directive('ngModel', function($compile) {
               var included = false;
               validation[v].forEach(function(i) {
                 if (i == value) { included = true; }
+              });
+              return included;
+            };
+          }
+
+          function buildExclusionValidation(validation, v) {
+            return function(value) {
+              if (!value) return true;
+              var included = true;
+              validation[v].forEach(function(i) {
+                if (i == value) { included = false; }
               });
               return included;
             };

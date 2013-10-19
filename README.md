@@ -112,4 +112,17 @@ Verifies that a field's value is included in a given set:
   };
   ```
 
+#### Exclusion: 
+
+Verifies that a field's value is excluded from a given set:
+
+  ```
+  parentScope.user = {
+    size: '',
+    validates: {
+      size: { exclusion: { from: ["XL", "XXL", "XS"] } }
+    }
+  };
+  ```
+
 Stay tuned for more! Happy hacking.
