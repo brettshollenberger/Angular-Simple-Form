@@ -151,6 +151,12 @@ simpleForm.directive('ngModel', function($compile) {
                 confirmationName = modelName + '.' + fieldName + 'Confirmation';
                 return value == formCtrl.$fields[confirmationName].$viewValue;
               };
+            },
+            numericality: function() {
+              return function(value) {
+                if (!value) return undefined;
+                return !isNaN(Number(value));
+              };
             }
           };
 

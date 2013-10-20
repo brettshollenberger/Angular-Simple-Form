@@ -244,7 +244,7 @@ describe('Simple Form', function () {
       parentScope.user = {
         username: '',
         validates: {
-          username:                 { presence: true, length: { min: 1, max: 10 } }
+          username: { presence: true, length: { min: 1, max: 10 } }
         }
       };
 
@@ -273,7 +273,7 @@ describe('Simple Form', function () {
       parentScope.user = {
         username: '',
         validates: {
-          username:                 { presence: true, length: { is: 6 } }
+          username: { presence: true, length: { is: 6 } }
         }
       };
 
@@ -290,6 +290,29 @@ describe('Simple Form', function () {
 
       ngFormCtrl.$fields['user.username'].$setViewValue('abcdef');
       expect(ngFormCtrl.$fields['user.username'].$valid).toBe(true);
+    });
+
+    it('validates numericality', function() {
+      parentScope.user = {
+        orderNumber: '',
+        validates: {
+          orderNumber: { presence: true, numericality: true }
+        }
+      };
+
+      html             =  '<form for="user">' +
+                            '<input ng-model="user.orderNumber">' +
+                          '</form>';
+
+      element          = $compile(html)($scope);
+
+      ngFormCtrl       = element.controller('form');
+
+      ngFormCtrl.$fields['user.orderNumber'].$setViewValue('abc');
+      expect(ngFormCtrl.$fields['user.orderNumber'].$valid).toBe(false);
+
+      ngFormCtrl.$fields['user.orderNumber'].$setViewValue('1111');
+      expect(ngFormCtrl.$fields['user.orderNumber'].$valid).toBe(true);
     });
 
   });
