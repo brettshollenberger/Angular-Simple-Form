@@ -27,11 +27,11 @@ But you don't need to write all that for each form. Simple Form's validations ar
     validates: {
       name:  { presence: true },
       email: { presence: true, email: true },
-      zip:   { presence: true, zip: [ zipValidator, "Must contain a valid zip code" ] }
+      zip:   { presence: true, zip: { validates: zipValidator, message: "Must contain a valid zip code"} }
     }
   };
   ```
-Writing custom validations is much easier in Simple Form, too. No more boilerplate; no more custom directives that tap into the $parsers array. Simple Form validators just require you to write a function that returns true or false:
+Writing custom validations is much easier in Simple Form, too. No more boilerplate; no more custom directives that tap into the $parsers array. Simple Form validators just require you to write a function that returns true or false, and assign it to the validates key on your validation:
   ```
   zipValidator = function(zip) {
     if(!zip) return true;
