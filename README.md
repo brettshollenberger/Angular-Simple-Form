@@ -127,13 +127,31 @@ Verifies that a field's value is excluded from a given set:
 
 #### Length: 
 
-Verifies that a field's value within a certain length:
+Verifies that a field's value a certain length:
 
   ```
   parentScope.user = {
     username: '',
     validates: {
       username: { length: { in: _.range(1..20) } }
+    }
+  };
+  ```
+
+  ```
+  parentScope.user = {
+    username: '',
+    validates: {
+      username: { length: { min: 1 } }
+    }
+  };
+  ```
+
+  ```
+  parentScope.user = {
+    username: '',
+    validates: {
+      username: { length: { min: 1, max: 10 } }
     }
   };
   ```
