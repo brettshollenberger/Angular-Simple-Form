@@ -69,6 +69,11 @@ simpleForm.directive('ngModel', function($compile) {
                 return value && value.length;
               };
             },
+            absence: function() {
+              return function(value) {
+                return !value;
+              };
+            },
             format: {
               email: function() {
                 return function(value) {

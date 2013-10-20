@@ -321,6 +321,26 @@ describe('Simple Form', function () {
       expect(ngFormCtrl.$fields['user.orderNumber'].$valid).toBe(true);
     });
 
+    it('validates absence of a field', function() {
+      parentScope.user = {
+        badField: '',
+        validates: {
+          badField: { absence: true }
+        }
+      };
+
+      html             =  '<form for="user">' +
+                            '<input ng-model="user.badField">' +
+                          '</form>';
+
+      element          = $compile(html)($scope);
+
+      ngFormCtrl       = element.controller('form');
+
+      ngFormCtrl.$fields['user.badField'].$setViewValue('something');
+      expect(ngFormCtrl.$fields['user.badField'].$valid).toBe(false);
+    });
+
   });
   
 });
