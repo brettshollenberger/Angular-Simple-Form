@@ -296,7 +296,7 @@ describe('Simple Form', function () {
       parentScope.user = {
         orderNumber: '',
         validates: {
-          orderNumber: { presence: true, numericality: true }
+          orderNumber: { presence: true, numericality: { ignore: /[\-\,]/g } }
         }
       };
 
@@ -315,6 +315,9 @@ describe('Simple Form', function () {
       expect(ngFormCtrl.$fields['user.orderNumber'].$valid).toBe(true);
 
       ngFormCtrl.$fields['user.orderNumber'].$setViewValue('1.111');
+      expect(ngFormCtrl.$fields['user.orderNumber'].$valid).toBe(true);
+
+      ngFormCtrl.$fields['user.orderNumber'].$setViewValue('1-111-00-11');
       expect(ngFormCtrl.$fields['user.orderNumber'].$valid).toBe(true);
     });
 

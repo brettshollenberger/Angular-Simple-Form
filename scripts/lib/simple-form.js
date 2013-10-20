@@ -152,11 +152,20 @@ simpleForm.directive('ngModel', function($compile) {
                 return value == formCtrl.$fields[confirmationName].$viewValue;
               };
             },
-            numericality: function() {
-              return function(value) {
-                if (!value) return undefined;
-                return !isNaN(Number(value));
-              };
+            numericality: {
+              true: function() {
+                return function(value) {
+                  if (!value) return undefined;
+                  return !isNaN(Number(value));
+                };
+              },
+              ignore: function(regex) {
+                return function(value) {
+                  if (!value) return undefined;
+                  value = value.replace(regex, '');
+                  return !isNaN(Number(value));
+                };
+              }
             }
           };
 
