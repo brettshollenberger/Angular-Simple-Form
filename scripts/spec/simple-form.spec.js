@@ -232,12 +232,41 @@ describe('Simple Form', function () {
       expect(ngFormCtrl.$fields['user.size'].$valid).toBe(false);
     });
 
-    it('validates length', function() {
+    it('validates length in', function() {
       ngFormCtrl.$fields['user.username'].$setViewValue('abcdefghijk');
       expect(ngFormCtrl.$fields['user.username'].$valid).toBe(false);
 
       ngFormCtrl.$fields['user.username'].$setViewValue('username');
       expect(ngFormCtrl.$fields['user.username'].$valid).toBe(true);
+    });
+
+    it('validates length min & max', function() {
+      parentScope.user = {
+        username: '',
+        validates: {
+          username:                 { presence: true, length: { min: 1, max: 10 } }
+        }
+      };
+
+      html             =  '<form for="user">' +
+                            '<input ng-model="user.username">' +
+                          '</form>';
+
+      element          = $compile(html)($scope);
+
+      ngFormCtrl       = element.controller('form');
+
+      ngFormCtrl.$fields['user.username'].$setViewValue(null);
+      expect(ngFormCtrl.$fields['user.username'].$valid).toBe(false);
+
+      ngFormCtrl.$fields['user.username'].$setViewValue('a');
+      expect(ngFormCtrl.$fields['user.username'].$valid).toBe(true);
+
+      ngFormCtrl.$fields['user.username'].$setViewValue('abcdefghi');
+      expect(ngFormCtrl.$fields['user.username'].$valid).toBe(true);
+
+      ngFormCtrl.$fields['user.username'].$setViewValue('abcdefghijk');
+      expect(ngFormCtrl.$fields['user.username'].$valid).toBe(false);
     });
 
   });

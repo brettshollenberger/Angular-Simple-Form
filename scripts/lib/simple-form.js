@@ -72,19 +72,19 @@ simpleForm.directive('ngModel', function($compile) {
             format: {
               email: function() {
                 return function(value) {
-                  if (!value) return true;
+                  if (!value) return undefined;
                   return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/.test(value);
                 };
               },
               zip: function() {
                 return function(value) {
-                  if(!value) return true;
+                  if(!value) return undefined;
                   return /(^\d{5}$)|(^\d{5}-{0,1}\d{4}$)/.test(value);
                 };
               },
               regex: function(regex) {
                 return function(value) {
-                  if (!value) return true;
+                  if (!value) return undefined;
                   return regex.test(value);
                 };
               }
@@ -92,7 +92,7 @@ simpleForm.directive('ngModel', function($compile) {
             inclusion: {
               in: function(what) {
                 return function(value) {
-                  if (!value) return true;
+                  if (!value) return undefined;
                   var included = false;
                   what.forEach(function(i) {
                     if (i == value) { included = true; }
@@ -104,7 +104,7 @@ simpleForm.directive('ngModel', function($compile) {
             exclusion: {
               from: function(what) {
                 return function(value) {
-                if (!value) return true;
+                if (!value) return undefined;
                   var included = true;
                   what.forEach(function(i) {
                     if (i == value) { included = false; }
@@ -116,8 +116,20 @@ simpleForm.directive('ngModel', function($compile) {
             length: {
               in: function(array) {
                 return function (value) {
-                  if (!value) return true;
+                  if (!value) return undefined;
                   return (value.length >= array[0] && value.length <= array[array.length - 1]);
+                };
+              },
+              min: function(min) {
+                return function(value) {
+                  if (!value) return undefined;
+                  return value.length >= min;
+                };
+              },
+              max: function(max) {
+                return function(value) {
+                  if (!value) return undefined;
+                  return value.length <= max;
                 };
               }
             },
@@ -181,13 +193,18 @@ simpleForm.directive('ngModel', function($compile) {
             if (isObject(remainingHash[key]))   {
               // Cut down the hash to only the section we're still interested in.
               remainingHash = remainingHash[key];
-              // The recursive key will be the key from the next segment of the hash
-              key   = Object.keys(value)[0];
-              // The recursive value will be the value from the next segment of the hash
-              value = value[key];
+              // The recursive keys will be the keys from the next segment of the hash
+              keys   = Object.keys(value);
 
-              // Recurse through the function
-              addValidations(key, value, remainingHash);
+              // Loop through each key to add a validator for each value in the event of
+              // multiple values like { length: { min: 1, max: 10 } }
+              keys.forEach(function(key) {
+                // The recursive value will be the value from the next segment of the hash
+                nestedValue = value[key];
+                // Recurse through the function
+                addValidations(key, nestedValue, remainingHash);
+              });
+              return;
             }
 
             // If the key cannot be found in the hash, we assume that it is a custom
