@@ -54,6 +54,19 @@ As in Rails, `presence: true` indicates a required field:
   };
   ```
 
+#### Absence:
+
+As in Rails, `absence: true` indicates a field that should not have a value:
+
+  ```
+  user = {
+    name: '',
+    validates: {
+      name:  { absence: true }
+    }
+  };
+  ```
+
 #### Format:
 
 Format matches an input against a pattern. There are several built-in, and you can also write your own using the `regex` matcher:
