@@ -125,7 +125,7 @@ Verifies that a field's value is excluded from a given set:
   };
   ```
 
-#### Length: 
+#### Numericality: 
 
 Verifies that a field's value is a number:
 
