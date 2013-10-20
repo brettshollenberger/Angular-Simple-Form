@@ -138,6 +138,19 @@ Verifies that a field's value is a number:
   };
   ```
 
+You can also specify an option to ignore certain characters, like dashes and commas:
+
+  ```
+  parentScope.user = {
+    orderNumber: '',
+    validates: {
+      orderNumber: { numericality: { ignore: /[\-\,]/g } }
+    }
+  };
+  ```
+
+Which would make numbers like `1-111-000-11` and `1,111` validate to true.
+
 #### Length: 
 
 Verifies that a field's value is a certain length:
