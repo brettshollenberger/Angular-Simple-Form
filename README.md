@@ -127,6 +127,19 @@ Verifies that a field's value is excluded from a given set:
 
 #### Length: 
 
+Verifies that a field's value is a number:
+
+  ```
+  parentScope.user = {
+    orderNumber: '',
+    validates: {
+      orderNumber: { numericality: true }
+    }
+  };
+  ```
+
+#### Length: 
+
 Verifies that a field's value is a certain length:
 
   ```

@@ -313,6 +313,9 @@ describe('Simple Form', function () {
 
       ngFormCtrl.$fields['user.orderNumber'].$setViewValue('1111');
       expect(ngFormCtrl.$fields['user.orderNumber'].$valid).toBe(true);
+
+      ngFormCtrl.$fields['user.orderNumber'].$setViewValue('1.111');
+      expect(ngFormCtrl.$fields['user.orderNumber'].$valid).toBe(true);
     });
 
   });
