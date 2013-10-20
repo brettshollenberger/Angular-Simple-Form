@@ -131,6 +131,12 @@ simpleForm.directive('ngModel', function($compile) {
                   if (!value) return undefined;
                   return value.length <= max;
                 };
+              },
+              is: function(is) {
+                return function(value) {
+                  if (!value) return undefined;
+                  return value.length == is;
+                };
               }
             },
             acceptance: function() {

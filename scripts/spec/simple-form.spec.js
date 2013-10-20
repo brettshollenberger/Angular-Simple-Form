@@ -269,6 +269,29 @@ describe('Simple Form', function () {
       expect(ngFormCtrl.$fields['user.username'].$valid).toBe(false);
     });
 
+    it('validates length is', function() {
+      parentScope.user = {
+        username: '',
+        validates: {
+          username:                 { presence: true, length: { is: 6 } }
+        }
+      };
+
+      html             =  '<form for="user">' +
+                            '<input ng-model="user.username">' +
+                          '</form>';
+
+      element          = $compile(html)($scope);
+
+      ngFormCtrl       = element.controller('form');
+
+      ngFormCtrl.$fields['user.username'].$setViewValue('abc');
+      expect(ngFormCtrl.$fields['user.username'].$valid).toBe(false);
+
+      ngFormCtrl.$fields['user.username'].$setViewValue('abcdef');
+      expect(ngFormCtrl.$fields['user.username'].$valid).toBe(true);
+    });
+
   });
   
 });
