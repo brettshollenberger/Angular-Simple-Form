@@ -31,7 +31,7 @@ describe('Simple Form', function () {
         name:                 { presence: true },
         username:             { presence: true, length: { in: _.range(1, 10) } },
         email:                { presence: true, format: { email: true } },
-        zip:                  { presence: true, zip: [ zipValidator, "Must contain a valid zip code" ] },
+        zip:                  { presence: true, zip: { validates: zipValidator, message: "Must contain a valid zip code" } },
         termsOfService:       { acceptance: true },
         password:             { confirmation: true },
         passwordConfirmation: { presence: true }
