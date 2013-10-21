@@ -97,7 +97,7 @@ simpleForm.directive('ngModel', function($compile) {
             inclusion: function(options) {
               return function(value) {
                 if (!value) return undefined;
-                if (!options.in) return undefined;
+                if (!options.in) throw "Inclusion validator must specify 'in' attribute.";
                 var included = false;
                 options.in.forEach(function(i) {
                   if (i == value) { included = true; }
@@ -108,7 +108,7 @@ simpleForm.directive('ngModel', function($compile) {
             exclusion: function(options) {
               return function(value) {
                 if (!value) return undefined;
-                if (!options.from) return undefined;
+                if (!options.from) throw "Exclusion validator must specify 'from' attribute.";
                 var included = true;
                 options.from.forEach(function(i) {
                   if (i == value) { included = false; }
@@ -226,7 +226,7 @@ simpleForm.directive('ngModel', function($compile) {
             // If the key cannot be found in the hash, we assume that it is a custom
             // validator that implements a validates key.
             if (isUndefined(remainingHash[key])) {
-              if (!value.validates) { throw "Custom validators must provide a validates key containing a Boolean function." }
+              if (!value.validates) { throw "Custom validators must provide a validates key containing a Boolean function."; }
               pushParser(value.validates);
             }
 
