@@ -94,29 +94,27 @@ simpleForm.directive('ngModel', function($compile) {
                 };
               }
             },
-            inclusion: {
-              in: function(what) {
-                return function(value) {
-                  if (!value) return undefined;
-                  var included = false;
-                  what.forEach(function(i) {
-                    if (i == value) { included = true; }
-                  });
-                  return included;
-                };
-              }
-            },
-            exclusion: {
-              from: function(what) {
-                return function(value) {
+            inclusion: function(options) {
+              return function(value) {
                 if (!value) return undefined;
-                  var included = true;
-                  what.forEach(function(i) {
-                    if (i == value) { included = false; }
-                  });
-                  return included;
-                };
-              }
+                if (!options.in) return undefined;
+                var included = false;
+                options.in.forEach(function(i) {
+                  if (i == value) { included = true; }
+                });
+                return included;
+              };
+            },
+            exclusion: function(options) {
+              return function(value) {
+                if (!value) return undefined;
+                if (!options.from) return undefined;
+                var included = true;
+                options.from.forEach(function(i) {
+                  if (i == value) { included = false; }
+                });
+                return included;
+              };
             },
             length: {
               in: function(array) {
