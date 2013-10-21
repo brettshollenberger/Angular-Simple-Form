@@ -207,7 +207,8 @@ Verifies that a field's value is a certain length:
 #### Uniqueness: 
 
 Verifies that a field's value is unique. This validator requires the model to implement
-an `all` method that retrieves all objects from the database to check against:
+an `all` method that retrieves all objects from the database to check against. In general,
+fields that must be unique should be indexed for performance:
 
   ```
   parentScope.user = {
