@@ -219,4 +219,7 @@ fields that must be unique should be indexed for performance:
   };
   ```
 
+Due to the opinionated nature of Simple Form, Angular forms that use the uniqueness validator
+should aim to follow the ActiveRecord pattern for designing models.
+
 Stay tuned for more! Happy hacking.
