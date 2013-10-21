@@ -161,6 +161,17 @@ simpleForm.directive('ngModel', function($compile) {
                 if (options.ignore) { value = value.replace(options.ignore, ''); }
                 return !isNaN(Number(value));
               };
+            },
+            uniqueness: function() {
+              return function(value) {
+                models = $model.all();
+                var unique = true;
+                var fieldName = modelCtrl.$name.replace(/\w{0,}\./, '');
+                models.forEach(function(model) {
+                  if (model[fieldName] == value) { unique = false; }
+                });
+                return unique;
+              };
             }
           };
 

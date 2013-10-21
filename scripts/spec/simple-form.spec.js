@@ -356,6 +356,34 @@ describe('Simple Form', function () {
       expect(ngFormCtrl.$fields['user.badField'].$valid).toBe(false);
     });
 
+    it('validates uniqueness of a field', function() {
+      parentScope.user = {
+        username: '',
+        validates: {
+          username: { uniqueness: true }
+        },
+        all: function() {
+          return [{
+            username: 'brettcassette'
+          }];
+        }
+      };
+
+      html             =  '<form for="user">' +
+                            '<input ng-model="user.username">' +
+                          '</form>';
+
+      element          = $compile(html)($scope);
+
+      ngFormCtrl       = element.controller('form');
+
+      ngFormCtrl.$fields['user.username'].$setViewValue('brettcassette');
+      expect(ngFormCtrl.$fields['user.username'].$valid).toBe(false);
+
+      ngFormCtrl.$fields['user.username'].$setViewValue('brettshollenberger');
+      expect(ngFormCtrl.$fields['user.username'].$valid).toBe(true);
+    });
+
   });
   
 });
