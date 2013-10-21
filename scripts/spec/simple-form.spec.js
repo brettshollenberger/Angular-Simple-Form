@@ -363,8 +363,12 @@ describe('Simple Form', function () {
           username: { uniqueness: true }
         },
         all: function() {
-          return [{
+          return [
+          {
             username: 'brettcassette'
+          },
+          {
+            username: 'brettshollenberger'
           }];
         }
       };
@@ -381,6 +385,9 @@ describe('Simple Form', function () {
       expect(ngFormCtrl.$fields['user.username'].$valid).toBe(false);
 
       ngFormCtrl.$fields['user.username'].$setViewValue('brettshollenberger');
+      expect(ngFormCtrl.$fields['user.username'].$valid).toBe(false);
+
+      ngFormCtrl.$fields['user.username'].$setViewValue('androidgeoff');
       expect(ngFormCtrl.$fields['user.username'].$valid).toBe(true);
     });
 
