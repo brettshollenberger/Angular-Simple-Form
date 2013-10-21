@@ -204,4 +204,18 @@ Verifies that a field's value is a certain length:
   };
   ```
 
+#### Uniqueness: 
+
+Verifies that a field's value is unique. This validator requires the model to implement
+an `all` method that retrieves all objects from the database to check against:
+
+  ```
+  parentScope.user = {
+    username: '',
+    validates: {
+      username: { uniqueness: true }
+    }
+  };
+  ```
+
 Stay tuned for more! Happy hacking.
