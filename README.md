@@ -54,6 +54,17 @@ As in Rails, `presence: true` indicates a required field:
   };
   ```
 
+To add custom error message to presence validation:
+
+  ```
+  user = {
+    name: '',
+    validates: {
+      name:  { message: 'Please provide a name.' }
+    }
+  };
+  ```
+
 #### Absence:
 
 As in Rails, `absence: true` indicates a field that should not have a value:
