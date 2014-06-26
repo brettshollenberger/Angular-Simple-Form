@@ -60,7 +60,7 @@ To add custom error message to presence validation:
   user = {
     name: '',
     validates: {
-      name:  { message: 'Please provide a name.' }
+      name:  { presence: { message: 'Please enter a name.' } }
     }
   };
   ```
